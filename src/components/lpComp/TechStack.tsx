@@ -1,9 +1,7 @@
-import { RecCard } from "../cards/RecCard";
 import { SkillIcon } from "@/components/common/SkillIcon";
 
-type SkillItem = { title: string; imgSrc: string; fallback?: string };
+type SkillItem = { title: string; imgSrc: string };
 
-// Add or adjust icons under /public/lp-assets to match these names.
 const devSkills: SkillItem[] = [
   { title: "JavaScript", imgSrc: "/skill/js.svg" },
   { title: "TypeScript", imgSrc: "/skill/typescript.svg" },
@@ -32,92 +30,46 @@ const devSkills: SkillItem[] = [
 
 const designTools: SkillItem[] = [
   { title: "Figma", imgSrc: "/skill/figma.svg" },
-  // { title: "Adobe XD", imgSrc: "/skill/adobexd.svg"},
-  { title: "Canva", imgSrc: "/skill/canva.svg"},
-  { title: "Eraser", imgSrc: "/skill/eraser.svg"},
+  { title: "Canva", imgSrc: "/skill/canva.svg" },
+  { title: "Eraser", imgSrc: "/skill/eraser.svg" },
   { title: "Photoshop", imgSrc: "/skill/ps.svg" },
   { title: "Illustrator", imgSrc: "/skill/ai.svg" },
   { title: "Premiere Pro", imgSrc: "/skill/premierpro.svg" },
 ];
 
-const DevItems = devSkills.slice(0, 25).map((item, index) => (
-  <div key={item.title} className="group inline-flex flex-col items-center text-center">
-    <div
-      className={`rounded-[14px] border border-border-primary p-2 transition-all duration-300 group-hover:border-gray-500 ${
-        index % 4 === 0
-          ? "delay-0 group-hover:-translate-y-2"
-          : index % 4 === 1
-            ? "delay-75 group-hover:-translate-y-2"
-            : index % 4 === 2
-              ? "delay-150 group-hover:-translate-y-2"
-              : "delay-200 group-hover:-translate-y-2"
-      }`}
-      style={{ width: 72, height: 72 }}
-    >
-      <div
-        className="grid h-full place-items-center rounded-md border-2 border-[#A5AEB81F]/10 bg-[#EDEEF0]"
-        style={{ boxShadow: "0px 2px 1.5px 0px #A5AEB852 inset" }}
-      >
-          <SkillIcon
-            className="h-12 w-12 filter grayscale opacity-80 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100"
-          alt={item.title}
-          src={item.imgSrc}
-          fallback="/lp-assets/code-engn.svg"
-        />
-      </div>
-    </div>
-    <span className="mt-2 text-xs text-text-secondary">{item.title}</span>
-  </div>
-));
+const hoverDelays = ["delay-0", "delay-75", "delay-150", "delay-200"];
 
-const DesignItems = designTools.map((item, index) => (
-  <div key={item.title} className="group inline-flex flex-col items-center text-center">
-    <div
-      className={`rounded-[14px] border border-border-primary p-2 transition-all duration-300  group-hover:border-gray-500  ${
-        index % 4 === 0
-          ? "delay-0 group-hover:-translate-y-2"
-          : index % 4 === 1
-            ? "delay-75 group-hover:-translate-y-2"
-            : index % 4 === 2
-              ? "delay-150 group-hover:-translate-y-2"
-              : "delay-200 group-hover:-translate-y-2"
-      }`}
-      style={{ width: 72, height: 72 }}
-    >
-      <div
-        className="grid h-full place-items-center rounded-md border-2 border-[#A5AEB81F]/10 bg-[#EDEEF0]"
-        style={{ boxShadow: "0px 2px 1.5px 0px #A5AEB852 inset" }}
-      >
-          <SkillIcon
-            className="h-12 w-12 filter grayscale opacity-80 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100"
-            alt={item.title}
-            src={item.imgSrc}
-            fallback={item.fallback || "/lp-assets/art-design.png"}
-          />
-      </div>
-    </div>
-    <span className="mt-2 text-xs text-text-secondary">{item.title}</span>
-  </div>
-));
-
-export function TechStack({ linkTo }: { linkTo?: string }) {
+function SkillGrid({ skills, fallback }: { skills: SkillItem[]; fallback: string }) {
   return (
-    <RecCard linkTo={linkTo}>
-      <div className="group-hover:from-bg-white absolute inset-y-0 left-0 z-20 w-1/5 bg-linear-to-r from-bg-primary to-transparent"></div>
-      <div className="group-hover:from-bg-white absolute inset-y-0 right-0 z-20 w-1/5 bg-linear-to-l from-bg-primary to-transparent"></div>
-      <div className="z-20 text-center">
-        <h2 className="text-base font-medium">Technical Skills</h2>
-        <p className="mt-1 text-text-secondary">Core languages, frameworks, and tools I use.</p>
-      </div>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3 transition-all duration-500 ease-in-out">
-        {DevItems}
-      </div>
-      <div className="mt-6 text-center">
-        <h3 className="text-sm font-medium text-gray-900">Design Tools</h3>
-      </div>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-3 transition-all duration-500 ease-in-out">
-        {DesignItems}
-      </div>
-    </RecCard>
+    <ul className="mt-5 flex flex-wrap justify-center gap-x-3 gap-y-5 sm:gap-x-4">
+      {skills.map(({ title, imgSrc }, index) => (
+        <li key={title} className="group/icon flex w-16 flex-col items-center text-center sm:w-[72px]">
+          <div
+            className={`skill-tile h-16 w-16 rounded-[14px] border border-neutral-200 p-2 transition-all duration-300 group-hover/skills:border-neutral-400 motion-safe:group-hover/skills:-translate-y-2 sm:h-[72px] sm:w-[72px] ${hoverDelays[index % hoverDelays.length]}`}
+          >
+            <div className="grid h-full place-items-center rounded-md border border-neutral-200 bg-neutral-100 shadow-[inset_0_2px_1.5px_0_rgb(0_0_0_/_0.12)]">
+              <SkillIcon
+                src={imgSrc}
+                alt={title}
+                fallback={fallback}
+                className="h-9 w-9 object-contain grayscale opacity-80 transition-opacity duration-300 group-hover/icon:opacity-100 sm:h-12 sm:w-12"
+              />
+            </div>
+          </div>
+          <span className="mt-2 text-xs leading-4 text-neutral-500">{title}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function TechStack() {
+  return (
+    <div className="group/skills border-t border-neutral-200 pt-8">
+      <h3 className="text-center text-sm font-medium">Technical skills</h3>
+      <SkillGrid skills={devSkills} fallback="/lp-assets/code-engn.svg" />
+      <h3 className="mt-8 text-center text-sm font-medium">Design tools</h3>
+      <SkillGrid skills={designTools} fallback="/lp-assets/art-design.png" />
+    </div>
   );
 }

@@ -1,7 +1,10 @@
+import { getProjectBySlug, normalizeProjectSlug } from "./projects";
+
 export type CaseStudySection = {
   heading: string;
   paragraphs?: string[];
   bullets?: string[];
+  ordered?: boolean;
 };
 
 export type CaseStudy = {
@@ -15,182 +18,178 @@ export type CaseStudy = {
   sections: CaseStudySection[];
 };
 
-export const caseStudies: CaseStudy[] = [
+const narratives: { slug: string; subtitle: string; sections: CaseStudySection[] }[] = [
   {
     slug: "jain-and-iyer",
-    title: "Jain & Iyer — Case Study",
-    subtitle:
-      "Designing a Dual-Model E-commerce Platform for Individuals & Residential Societies",
-    coverImage: "/projects/jainiyer.jpg",
-    tech: ["Next.js", "Node.js", "PostgreSQL", "Razorpay", "Tailwind CSS", "META Api", "Google Cloud Platform (GCP)"],
-    liveUrl: "https://www.jainandiyer.com/",
+    subtitle: "Translating individual purchases and scheduled society orders into one commerce experience.",
     sections: [
       {
-        heading: "Problem Statement",
+        heading: "The challenge",
         paragraphs: [
-          "Traditional e-commerce platforms are not built for recurring household needs or society-based ordering. Jain & Iyer required a system that could support both instant individual purchases and scheduled society-level ordering with grouped society-wise deliveries as per schedule, while maintaining efficiency, automation, and full administrative control—without relying on slow or rigid off-the-shelf solutions.",
+          "Jain & Iyer is a batters, flours, and instant-premix brand serving individual customers and residential societies. Those customers share a product catalogue, but not an ordering routine. Individual purchases follow a direct ordering journey; society purchases need to fit fixed weekly delivery days, cutoff times, and coordinated dispatch.",
+          "Checkout needed to make those differences understandable: customers need a clear delivery date, while the business needs orders organized around its delivery schedule.",
         ],
       },
       {
-        heading: "1. Understanding the Business Reality",
+        heading: "Two ways to order",
         paragraphs: [
-          "Jain & Iyer is a high-end e-commerce brand and Manufacturer of Authentic Food Batters (Idli, dosa, Vada) Flours (Refer Product List) Instant Pre-Mixes (Refer Product List) All our Products are Preservatives and Chemical Free. The business operates in two distinct ways: individual customers who order anytime, and residential societies that prefer fixed weekly delivery schedules. The real challenge was translating these real-world buying behaviors into a single, scalable digital platform.",
-        ],
-      },
-      {
-        heading: "2. Defining the Dual Ordering Model",
-        paragraphs: [
-          "To keep the system clear and scalable, the platform was designed around two independent ordering models:",
+          "The platform keeps individual and society ordering distinct without treating them as separate products. The chosen ordering model determines the relevant pricing and delivery information, so customers can understand the conditions of their purchase before completing checkout.",
+          "The society is also an operational grouping. Society-specific pricing serves customers, while grouped orders give the delivery operation a shared destination for dispatch.",
         ],
         bullets: [
-          "Individual Model: Customers can place orders anytime with standard doorstep delivery.",
-          "Society Model: Orders are placed under a society with predefined delivery days (1–2 days per week), enabling group benefits and coordinated deliveries.",
+          "Individual orders follow a direct doorstep-delivery journey.",
+          "Society orders follow predefined weekly delivery days.",
+          "Society-specific pricing accompanies society-grouped orders.",
         ],
       },
       {
-        heading: "3. Planning Before Designing",
+        heading: "Business rules before screens",
+        ordered: true,
         paragraphs: [
-          "Before starting UI design, the entire business logic was mapped out:",
+          "Each society's delivery days and cutoff times define when an order can be fulfilled. The application checks those rules and automatically assigns the next valid delivery date when an order arrives after the cutoff, rather than leaving the customer to interpret the schedule.",
+          "These rules connect checkout to dispatch. Administrative overrides provide room for schedule changes without disrupting existing orders, keeping operational adjustments distinct from the normal date-assignment flow.",
         ],
         bullets: [
-          "Each society has specific delivery days and cut-off times",
-          "Orders placed after the cut-off automatically move to the next valid delivery date",
-          "Admins must be able to override schedules without affecting existing orders",
-          "Society orders must be grouped for delivery efficiency",
+          "Check the society's delivery days and order cutoff.",
+          "Assign the next valid delivery date after the cutoff.",
+          "Group orders by society for dispatch.",
+          "Allow administrative schedule overrides without disrupting existing orders.",
         ],
       },
       {
-        heading: "4. UX Strategy & Wireframing",
+        heading: "Designing for repeat use",
         paragraphs: [
-          "User journeys were designed separately for individual buyers, society buyers, and admins. The UX focus was on clarity, speed, and repeat usage.",
+          "User journeys and wireframes helped structure the different paths through the product. The customer-facing design focuses on repeat ordering: a clear starting choice, mobile-first browsing, and checkout steps that keep attention on the purchase rather than the scheduling rules behind it.",
+          "Visible delivery dates connect the shopping flow to the weekly delivery model. Customers can see when an order fits the schedule as part of their buying decision.",
         ],
         bullets: [
-          "Clear separation between society and individual ordering",
-          "Mobile-first design for frequent customers",
-          "Minimal checkout steps for recurring orders",
-          "Transparent communication of delivery dates and scheduling",
+          "Distinguish individual and society ordering early.",
+          "Keep mobile checkout focused.",
+          "Show delivery dates and scheduling information clearly.",
         ],
       },
       {
-        heading: "5. Automated Delivery Scheduling System",
+        heading: "Control behind the scenes",
         paragraphs: [
-          "The core innovation of the platform is its automated delivery engine. The system dynamically validates delivery availability based on society rules and automatically reschedules orders placed outside allowed windows. Orders are grouped society-wise to simplify delivery planning and reduce operational effort.",
-          "This automation removes manual coordination while keeping the system flexible.",
-        ],
-      },
-      {
-        heading: "6. Admin Control & Multi-Role Access",
-        paragraphs: [
-          "The platform includes a robust admin system with multi-role access.",
-          "Admins can:",
+          "The administrative experience brings society setup, products, inventory, and orders into the same operation. Customer, administrative, and delivery responsibilities stay distinct: customers place purchases, administrators manage the catalogue and schedules, and delivery work uses society-grouped orders for dispatch.",
+          "Catalogue and schedule controls sit alongside order management, connecting what customers can buy with how the business prepares deliveries.",
         ],
         bullets: [
-          "Create and manage societies",
-          "Define delivery days and cut-off times",
-          "Override delivery schedules when required",
-          "Manage inventory and products",
-          "View and process society-wise grouped orders",
+          "Create societies with delivery days and cutoffs.",
+          "Manage products and inventory.",
+          "Review society-grouped orders for dispatch.",
+          "Apply schedule overrides when needed.",
         ],
       },
       {
-        heading: "7. Technology & Performance Focus",
+        heading: "Connecting the system",
         paragraphs: [
-          "The platform was built with performance and scalability in mind.",
-          "Tech Stack:",
-        ],
-        bullets: [
-          "Frontend: Next.js",
-          "Backend: Node.js",
-          "Database: PostgreSQL",
-          "Payments: Razorpay",
-          "Styling: Tailwind CSS",
-          "SMS/Notifications: META Api",
-          "Hosting: Google Cloud Platform (GCP)",
+          "Next.js provides the customer-facing frontend, while Node.js supports application logic, including ordering and scheduling. Razorpay connects payments, Tailwind CSS supports the interface styling, and Google Cloud Platform provides hosting. The system also includes a notification integration.",
+          "These pieces support the path from customer ordering to operational handling. The delivery rules connect the frontend purchase journey with administrative scheduling and society-grouped dispatch.",
         ],
       },
       {
-        heading: "8. Outcome & Impact",
+        heading: "What the product enables",
         paragraphs: [
-          "The final system enables effortless recurring ordering for both individuals and residential societies. It reduces operational complexity, improves delivery efficiency, and provides a scalable foundation for future growth.",
-          "This project demonstrates the ability to translate complex business rules into a clean, high-performance, production-ready full-stack solution.",
+          "One system handles individual purchases and scheduled society orders without hiding their differences. Customers see the ordering context and delivery date; the business works with grouped orders and controls products, inventory, and schedules.",
+          "The design lesson is practical: define the business rules before simplifying the screens. Here, a focused shopping experience depends on representing the delivery workflow clearly, not removing it from view.",
         ],
       },
     ],
   },
   {
     slug: "edtech-notes-youtube",
-    title: "EdTech Website — Notes + YouTube Integration",
-    subtitle: "Conceptual Learning Platform for Students",
-    coverImage: "/projects/gyanlab.jpg",
-    tech: ["Next.js", "Google Drive API", "YouTube Data API", "Tailwind CSS"],    liveUrl: "https://www.gyanlabap.com/",    sections: [
+    subtitle: "Bringing class-wise study notes and video learning into one focused student experience.",
+    sections: [
       {
-        heading: "Overview",
+        heading: "The starting point",
         paragraphs: [
-          "Built a mobile-first EdTech platform combining structured study notes with YouTube-based video learning for conceptual clarity.",
+          "Gyanlab is a student learning website that brings class-wise notes and educational videos into one place. The starting point is the student's learning context: material needs to be relevant to their class, easy to reach, and comfortable to read on the device they have at hand.",
+          "Notes and video serve different needs within that experience. Written material supports reading and revision, while a video can offer another explanation of a concept. Keeping both available gives the website a clear purpose beyond simply listing resources.",
         ],
       },
       {
-        heading: "Class-wise Notes via Drive API",
+        heading: "Notes that stay easy to manage",
         paragraphs: [
-          "Implemented class-wise notes access using Google Drive API, allowing easy content updates without redeploying the app.",
+          "The Google Drive API connects the website to class-wise study notes. Learning content can be updated without redeploying the application, separating changes to the material from changes to the website itself. This matters because the notes are the resource students come to use, not a fixed part of the interface.",
+          "Class-wise organization gives those resources a consistent structure. Students can approach the material through their class, while the website presents the connected notes within its learning experience rather than treating content maintenance as an application release.",
         ],
       },
       {
-        heading: "YouTube Integration",
+        heading: "Video learning, connected",
         paragraphs: [
-          "Integrated YouTube Data API to dynamically fetch and display educational videos directly within the platform.",
+          "Educational videos are dynamically fetched and displayed through the YouTube Data API. Video learning sits alongside the notes in the same website, bringing two forms of explanation into a connected browsing experience instead of making the product exclusively a notes library or a video page.",
+          "The learning rationale is conceptual clarity. Reading and watching can provide different ways to engage with a topic; making both resources available supports that choice without assuming every student needs the same format for every concept.",
         ],
       },
       {
-        heading: "UI for Learning Focus",
+        heading: "An interface for learning",
         paragraphs: [
-          "Designed a clean, distraction-free UI focused on quick access, readability, and smooth navigation for students.",
+          "The mobile-first interface prioritizes readability and clear, quick navigation. On smaller screens, the route to useful material matters as much as the material itself: students need to understand where they are and reach the notes or videos without navigating around unnecessary interface elements.",
+          "The design emphasis stays on learning content. A restrained presentation leaves room for reading, while straightforward navigation supports moving through the available resources. Together, these choices keep the class-wise structure and connected video learning understandable in everyday use.",
+        ],
+        bullets: [
+          "Organize notes by class.",
+          "Keep reading comfortable on mobile.",
+          "Make notes and videos easy to reach.",
         ],
       },
     ],
   },
   {
     slug: "anonymous-feedback",
-    title: "Anonymous Feedback Platform — Privacy-First Feedback Links",
-    subtitle: "True Feedback System",
-    coverImage: "/projects/truefeedback.jpg",
-    tech: ["Next.js", "MongoDB", "Tailwind CSS"],
-    liveUrl: "https://true-feedback-byvishal.vercel.app/",
+    subtitle: "Shareable feedback links with a separate private space for reviewing responses.",
     sections: [
       {
-        heading: "Overview",
+        heading: "The idea",
         paragraphs: [
-          "Designed and developed a privacy-first anonymous feedback system where users can collect honest responses via shareable links.",
+          "True Feedback is built around a privacy-first intent: make it straightforward to ask for honest feedback and give the recipient a separate place to review it. Shareable links connect the person requesting feedback with reviewers, while public submission pages and a private dashboard serve different parts of the workflow.",
+          "That separation gives the product its structure. Reviewers need a focused place to write; recipients need a place to return to the responses. The interface keeps those purposes distinct rather than combining collection and management on one page.",
         ],
       },
       {
-        heading: "User Dashboards",
+        heading: "A simple submission journey",
         paragraphs: [
-          "Implemented user dashboards to manage feedback while keeping sender identity fully anonymous.",
+          "A shared link takes a reviewer to a public feedback page, where they can write and submit a response without creating an account. Removing account creation from that journey keeps the immediate task clear: the reviewer is there to provide feedback, not to set up another profile.",
+          "The public page focuses on that single interaction. It is the entry point for a response, while reviewing and managing the collected feedback belongs to the recipient's separate dashboard.",
+        ],
+        bullets: [
+          "Open the recipient's shared link.",
+          "Write feedback on the public submission page.",
+          "Submit without creating a reviewer account.",
         ],
       },
       {
-        heading: "Trust-focused UI",
+        heading: "A private place to manage responses",
         paragraphs: [
-          "Built a simple, trust-focused UI to encourage genuine responses without login friction for reviewers.",
+          "The private recipient dashboard provides a place to view and manage incoming feedback. Unlike the public submission page, it is designed around the collected responses rather than the act of writing a new one. This gives the recipient a consistent destination for the other half of the feedback workflow.",
+          "Keeping response management separate also clarifies the purpose of the shared link. It invites someone to contribute feedback; it is not the recipient's working view of the responses. Public collection and private review remain distinct experiences.",
         ],
       },
       {
-        heading: "Scalable Architecture",
+        heading: "Keeping the product focused",
         paragraphs: [
-          "Structured the system for scalability with secure data handling and clear separation between public feedback pages and private dashboards.",
+          "Next.js, MongoDB, and Tailwind CSS support the application. The technical foundation serves a deliberately narrow workflow: collect feedback through shareable links, then let the recipient view and manage those responses in a private dashboard.",
+          "Clear navigation and a restrained interface keep attention on the feedback itself. The design rationale is to make each side of the exchange understandable: reviewers have a direct submission journey, and recipients have a separate management space. The privacy-first intent is reflected in this public/private separation.",
         ],
       },
     ],
   },
 ];
 
-export const getCaseStudyBySlug = (slug?: string) => {
-  if (!slug) return undefined;
-  const aliasMap: Record<string, string> = {
-    // Map project slugs to case study slugs
-    "society-commerce": "jain-and-iyer",
+export const caseStudies: CaseStudy[] = narratives.map((narrative) => {
+  const project = getProjectBySlug(narrative.slug);
+  if (!project) throw new Error(`Missing project data for ${narrative.slug}`);
+
+  return {
+    ...narrative,
+    title: project.title,
+    coverImage: project.heroImage,
+    tech: project.tech,
+    liveUrl: project.liveUrl,
+    repoUrl: project.repoUrl,
   };
-  const normalized = aliasMap[slug] ?? slug;
-  return caseStudies.find((c) => c.slug === normalized);
-};
+});
+
+export const getCaseStudyBySlug = (slug?: string) =>
+  slug ? caseStudies.find((study) => study.slug === normalizeProjectSlug(slug)) : undefined;

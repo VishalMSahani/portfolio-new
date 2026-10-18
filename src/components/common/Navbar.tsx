@@ -1,182 +1,94 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { SocialPill } from "./SocialPill";
 import { usePathname } from "next/navigation";
-import { CloseButton, Dialog, DialogPanel } from "@headlessui/react";
-import { useEffect, useState } from "react";
-import { JSX } from "react";
+import { useState } from "react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-type NavigationLink = {
-  name: string;
-  link: string;
-};
+const navigationLinks = [
+  { name: "Home", href: "/" },
+  { name: "Projects", href: "/projects" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
 
-const navigationLinks: readonly NavigationLink[] = [
-  { name: "Home", link: "/" },
-  { name: "About", link: "/about" },
-  { name: "Projects", link: "/projects" },
-  { name: "Contact", link: "/contact" },
-] as const;
-
-const Navbar: React.FC = () => {
-  return (
-    <header role="banner">
-      <DesktopNav />
-      <MobileNav />
-    </header>
-  );
-};
-
-function DesktopNav() {
-  const path = usePathname();
-
-  const determineActiveClass = (link: string): string => {
-    return path === link ? "text-text-primary" : "text-gray-500";
-  };
-
-  return (
-    <nav
-      aria-label="Desktop navigation"
-      className="hidden h-16 w-full items-center justify-between border-b border-border-primary/50 px-4 md:flex"
-    >
-      <div className="w-26">
-        <Link href="/" aria-label="Home">
-          <img
-            className="h-12 w-12"
-            src="/v-logo.svg"
-            alt="Vishal's Logo"
-          />
-        </Link>
-      </div>
-      <ul className="flex place-items-center space-x-4 rounded-full border border-border-primary px-5 py-2 text-sm text-gray-500">
-        {navigationLinks.map((link) => (
-          <li key={link.name}>
-            <Link
-              href={link.link}
-              prefetch={true}
-              className={`${determineActiveClass(
-                link.link,
-              )} font-medium hover:text-text-primary`}
-            >
-              {link.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <SocialPill />
-    </nav>
-  );
+function isActive(path: string, href: string) {
+  return href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
 }
 
-function MobileNav() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const path = usePathname();
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [path]);
-
+function Brand({ onClick }: { onClick?: () => void }) {
   return (
-    <nav
-      aria-label="Mobile navigation"
-      className="flex h-16 items-center justify-between gap-2.5 border-b border-border-primary/50 px-3 md:hidden"
-    >
-      <NavLogo onClickCallback={setIsOpen} />
-
-      <CircleBtn
-        onClickCallback={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-        aria-controls="mobile-menu"
-        aria-label="Toggle menu"
-      />
-
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="fixed inset-0 z-50 bg-bg-primary py-1 focus:outline-none md:hidden"
-      >
-        <DialogPanel id="mobile-menu" className="size-full overflow-y-auto">
-          <div className="flex h-14 items-center justify-between px-3">
-            <NavLogo onClickCallback={setIsOpen} />
-            <CloseButton className="rounded-full border border-border-primary p-2">
-              <svg viewBox="0 0 16 16" fill="currentColor" className="h-5 w-5">
-                <path
-                  fill="#3C3C3F"
-                  d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"
-                ></path>
-              </svg>
-            </CloseButton>
-          </div>
-          <div className="grid grid-cols-1 gap-1 px-1 pb-1 sm:px-3 sm:pb-3">
-            {navigationLinks.map(({ name, link }) => (
-              <Link
-                href={link}
-                key={link}
-                className={`rounded-lg px-3 py-2 text-xl/9 font-medium ${
-                  path === link ? "text-text-primary" : "text-text-secondary"
-                } data-active:bg-gray-950/5`}
-                aria-current={path === link ? "page" : undefined}
-              >
-                {name}
-              </Link>
-            ))}
-          </div>
-        </DialogPanel>
-      </Dialog>
-    </nav>
-  );
-}
-
-interface NavLogoProps {
-  onClickCallback: (value: boolean) => void;
-}
-
-const NavLogo: React.FC<NavLogoProps> = ({ onClickCallback }) => {
-  return (
-    <Link href="/" onClick={() => onClickCallback(false)} aria-label="Home">
-      <img
-        className="h-8 w-8"
-        src="/v-logo.svg"
-        alt="Vishal's Logo"
-      />
+    <Link href="/" onClick={onClick} aria-label="Vishal Sahani — home" className="inline-flex shrink-0 items-center gap-3">
+      <Image src="/v-logo.svg" width={34} height={34} alt="" className="grayscale" />
+      <span className="text-sm font-medium tracking-tight">Vishal Sahani</span>
     </Link>
   );
-};
-
-interface CircleBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  onClickCallback: () => void;
-  "aria-expanded": boolean;
-  "aria-controls": string;
-  "aria-label": string;
 }
 
-const CircleBtn = ({
-  onClickCallback,
-  className = "",
-  ...props
-}: CircleBtnProps): JSX.Element => {
-  return (
-    <button
-      className={`rounded-full border border-border-primary p-2 ${className}`}
-      onClick={onClickCallback}
-      {...props}
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <path
-          d="M0 4.99599C0 4.77599 0.105357 4.56501 0.292893 4.40945C0.48043 4.2539 0.734784 4.1665 1 4.1665H19C19.2652 4.1665 19.5196 4.2539 19.7071 4.40945C19.8946 4.56501 20 4.77599 20 4.99599C20 5.21598 19.8946 5.42696 19.7071 5.58252C19.5196 5.73808 19.2652 5.82547 19 5.82547H1C0.734784 5.82547 0.48043 5.73808 0.292893 5.58252C0.105357 5.42696 0 5.21598 0 4.99599ZM5 9.99942C5 9.77943 5.10536 9.56845 5.29289 9.41289C5.48043 9.25733 5.73478 9.16994 6 9.16994H19C19.2652 9.16994 19.5196 9.25733 19.7071 9.41289C19.8946 9.56845 20 9.77943 20 9.99942C20 10.2194 19.8946 10.4304 19.7071 10.586C19.5196 10.7415 19.2652 10.8289 19 10.8289H6C5.73478 10.8289 5.48043 10.7415 5.29289 10.586C5.10536 10.4304 5 10.2194 5 9.99942ZM11.8333 14.1742C11.5681 14.1742 11.3138 14.2616 11.1262 14.4172C10.9387 14.5727 10.8333 14.7837 10.8333 15.0037C10.8333 15.2237 10.9387 15.4347 11.1262 15.5902C11.3138 15.7458 11.5681 15.8332 11.8333 15.8332H19C19.2652 15.8332 19.5196 15.7458 19.7071 15.5902C19.8946 15.4347 20 15.2237 20 15.0037C20 14.7837 19.8946 14.5727 19.7071 14.4172C19.5196 14.2616 19.2652 14.1742 19 14.1742H11.8333Z"
-          fill="currentColor"
-        />
-      </svg>
-    </button>
-  );
-};
+function MobileNav({ path }: { path: string }) {
+  const [open, setOpen] = useState(false);
 
-export default Navbar;
+  return (
+    <div className="md:hidden">
+      <button type="button" onClick={() => setOpen(true)} aria-label="Open navigation menu" aria-expanded={open} aria-controls="mobile-navigation" className="grid h-11 w-11 place-items-center rounded-full border border-neutral-200">
+        <Menu size={19} strokeWidth={1.5} />
+      </button>
+      <Dialog open={open} onClose={setOpen} className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 overflow-y-auto p-3">
+          <DialogPanel id="mobile-navigation" className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl">
+            <DialogTitle className="sr-only">Site navigation</DialogTitle>
+            <div className="flex items-center justify-between gap-4">
+              <Brand onClick={() => setOpen(false)} />
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-11 w-11 place-items-center rounded-full border border-neutral-200">
+                <X size={19} strokeWidth={1.5} />
+              </button>
+            </div>
+            <nav aria-label="Mobile navigation" className="mt-10">
+              <ul className="divide-y divide-neutral-200">
+                {navigationLinks.map(({ name, href }) => (
+                  <li key={href}>
+                    <Link href={href} onClick={() => setOpen(false)} aria-current={isActive(path, href) ? "page" : undefined} className={cn("flex items-center justify-between py-5 font-[family-name:var(--font-display)] text-2xl tracking-tight", isActive(path, href) ? "text-neutral-950" : "text-neutral-500")}>
+                      {name}<ArrowUpRight size={20} aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <p className="eyebrow mt-8">Ideas become better together.</p>
+          </DialogPanel>
+        </div>
+      </Dialog>
+    </div>
+  );
+}
+
+export default function Navbar() {
+  const path = usePathname();
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/95 backdrop-blur-sm">
+      <div className="section-wrap flex h-16 items-center justify-between gap-6">
+        <Brand />
+        <nav aria-label="Main navigation" className="hidden md:block">
+          <ul className="flex items-center gap-5 rounded-full border border-neutral-200 px-5 lg:gap-7">
+            {navigationLinks.map(({ name, href }) => (
+              <li key={href}>
+                <Link href={href} aria-current={isActive(path, href) ? "page" : undefined} className={cn("relative inline-flex min-h-11 items-center text-sm transition-colors hover:text-neutral-950", isActive(path, href) ? "font-semibold text-neutral-950 after:absolute after:bottom-1 after:left-1/2 after:h-1 after:w-1 after:-translate-x-1/2 after:rounded-full after:bg-neutral-950" : "text-neutral-500")}>
+                  {name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <Link href="/contact" className="hidden min-h-10 items-center gap-3 rounded-full border border-neutral-300 px-4 text-sm font-semibold transition-colors hover:border-neutral-950 hover:bg-neutral-950 hover:text-white lg:inline-flex">
+          Let&apos;s talk <ArrowUpRight size={15} aria-hidden="true" />
+        </Link>
+        <MobileNav key={path} path={path} />
+      </div>
+    </header>
+  );
+}

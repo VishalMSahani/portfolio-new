@@ -1,58 +1,26 @@
-import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
-interface SubService {
-  name: string;
-  icon: React.ReactNode;
-}
-
-interface ServiceCardProps {
+export function ServiceCard({ title, description, imageSrc, deliverables }: {
   title: string;
   description: string;
   imageSrc: string;
-  subServices: SubService[];
-}
-
-export function ServiceCard({ title, description, imageSrc, subServices }: ServiceCardProps) {
+  deliverables: string[];
+}) {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white">
-      {/* Image Section */}
-      <div className="relative h-72 overflow-hidden bg-gray-50 rounded-b-3xl">
-        <Image
-          src={imageSrc}
-          alt={title}
-          fill
-          className="object-contain p-2"
-        />
+    <article className="group/service flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-shadow duration-300 hover:border-neutral-300 hover:shadow-[0_4px_20px_rgb(0_0_0_/_0.04)] focus-within:border-neutral-300">
+      <div className="relative h-48 border-b border-neutral-200 bg-neutral-50 sm:h-56">
+        <Image src={imageSrc} alt="" fill sizes="(max-width: 767px) 100vw, 50vw" className="service-doodle object-contain p-5 grayscale transition-transform duration-300 motion-safe:group-hover/service:-rotate-2" />
       </div>
-
-      {/* Content Section */}
-      <div className="relative p-4">
-        {/* Title */}
-        <h3 className="mb-3 text-2xl font-bold text-gray-900">
-          {title}
-        </h3>
-
-        {/* Description */}
-        <p className="mb-6 text-sm leading-relaxed text-gray-600">
-          {description}
-        </p>
-
-        {/* Sub Services */}
-        <div className="space-y-3">
-          {subServices.map((service, index) => (
-            <div
-              key={index}
-              className="group/item flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 transition-all duration-200 hover:bg-gray-50"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-700 transition-all duration-300 group-hover/item:bg-gray-700 group-hover/item:text-white group-hover/item:shadow-sm">
-                {service.icon}
-              </div>
-              <span className="font-medium text-gray-900">{service.name}</span>
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-1 flex-col p-6 sm:p-7">
+        <h3 className="text-2xl font-medium tracking-tight">{title}</h3>
+        <p className="mb-4 mt-3 text-sm leading-relaxed text-neutral-600">{description}</p>
+        <ul className="mb-5 space-y-2 text-sm text-neutral-500">
+          {deliverables.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+        <Link href="/contact" className="text-link mt-auto border-t border-neutral-200 pt-4" aria-label={`Let's talk about ${title.toLowerCase()}`}>Let&apos;s talk <ArrowUpRight size={15} aria-hidden="true" /></Link>
       </div>
-    </div>
+    </article>
   );
 }

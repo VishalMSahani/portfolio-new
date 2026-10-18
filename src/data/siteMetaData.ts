@@ -12,7 +12,7 @@ export const SocialLinks = {
   github: "https://github.com/VishalMSahani",
   linkedin: "https://www.linkedin.com/in/vishal-sahani-208250197/",
   twitter: "https://x.com/Sahanivishal64",
-  instagram: "https://www.instagram.com/vishal_sahani_/",
+  instagram: "https://www.instagram.com/vishal.sahaniii/",
 };
 
 type SoftwareDataItem = {

@@ -28,12 +28,12 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   const textPathRef = useRef<SVGTextPathElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const [spacing, setSpacing] = useState(0);
-  const [offset, setOffset] = useState(0);
   const uid = useId();
   const pathId = `curve-${uid}`;
   const pathD = `M-100,40 Q500,${40 + curveAmount} 1540,40`;
 
   const dragRef = useRef(false);
+  const [dragging, setDragging] = useState(false);
   const lastXRef = useRef(0);
   const dirRef = useRef<'left' | 'right'>(direction);
   const velRef = useRef(0);
@@ -55,12 +55,11 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
     if (textPathRef.current) {
       const initial = -spacing;
       textPathRef.current.setAttribute('startOffset', initial + 'px');
-      setOffset(initial);
     }
   }, [spacing]);
 
   useEffect(() => {
-    if (!spacing || !ready) return;
+    if (!spacing || !ready || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let frame = 0;
     const step = () => {
       if (!dragRef.current && textPathRef.current) {
@@ -71,7 +70,6 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
         if (newOffset <= -wrapPoint) newOffset += wrapPoint;
         if (newOffset > 0) newOffset -= wrapPoint;
         textPathRef.current.setAttribute('startOffset', newOffset + 'px');
-        setOffset(newOffset);
       }
       frame = requestAnimationFrame(step);
     };
@@ -82,6 +80,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   const onPointerDown = (e: PointerEvent) => {
     if (!interactive) return;
     dragRef.current = true;
+    setDragging(true);
     lastXRef.current = e.clientX;
     velRef.current = 0;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -98,16 +97,16 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
     if (newOffset <= -wrapPoint) newOffset += wrapPoint;
     if (newOffset > 0) newOffset -= wrapPoint;
     textPathRef.current.setAttribute('startOffset', newOffset + 'px');
-    setOffset(newOffset);
   };
 
   const endDrag = () => {
     if (!interactive) return;
     dragRef.current = false;
+    setDragging(false);
     dirRef.current = velRef.current > 0 ? 'right' : 'left';
   };
 
-  const cursorStyle = interactive ? (dragRef.current ? 'grabbing' : 'grab') : 'auto';
+  const cursorStyle = interactive ? (dragging ? 'grabbing' : 'grab') : 'auto';
 
   return (
     <div
@@ -131,7 +130,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
         </defs>
         {ready && (
           <text xmlSpace="" className={`fill-black ${className ?? ''}`}>
-            <textPath ref={textPathRef} href={`#${pathId}`} startOffset={offset + 'px'} xmlSpace="">
+            <textPath ref={textPathRef} href={`#${pathId}`} startOffset={-spacing + 'px'} xmlSpace="">
               {totalText}
             </textPath>
           </text>
