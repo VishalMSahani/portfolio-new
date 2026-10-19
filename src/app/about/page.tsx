@@ -2,21 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { siteMetadata, SocialLinks } from "@/data/siteMetaData";
+import { SocialLinks } from "@/data/siteMetaData";
+import { JsonLd } from "@/components/common/JsonLd";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
+import { aboutStructuredData } from "@/lib/structuredData";
 
-const description =
-  "Vishal Sahani is a full-stack developer and UI/UX designer building websites and applications.";
-
-export const metadata: Metadata = {
-  title: "About",
-  description,
-  alternates: { canonical: `${siteMetadata.siteUrl}/about` },
-  openGraph: {
-    title: `About | ${siteMetadata.title}`,
-    description,
-    url: `${siteMetadata.siteUrl}/about`,
-  },
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.about);
 
 const capabilities = [
   { title: "Frontend", tools: "Next.js, React, TypeScript, Tailwind CSS" },
@@ -34,15 +25,16 @@ const socials = [
 export default function AboutPage() {
   return (
     <div className="section-wrap py-12 md:py-16">
+      <JsonLd data={aboutStructuredData} />
       <div className="mx-auto max-w-3xl">
         <header>
-          <h1 className="text-4xl font-medium tracking-tight md:text-5xl">About me</h1>
+          <h1 className="text-4xl font-medium tracking-tight md:text-5xl">About Vishal Sahani</h1>
           <div className="mt-8 grid gap-7 sm:grid-cols-[1fr_180px] sm:items-center sm:gap-10">
             <div>
               <h2 className="text-2xl font-medium tracking-tight">Vishal Sahani</h2>
-              <p className="mt-2 text-sm text-neutral-500">Full-stack developer & UI/UX designer</p>
+              <p className="mt-2 text-sm text-neutral-500">Software Developer & UI/UX Designer</p>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-neutral-600">
-                I build websites and applications, with a focus on clear
+                I build websites and full-stack applications, with a focus on clear
                 interfaces and practical workflows. My projects span commerce,
                 education, and feedback.
               </p>

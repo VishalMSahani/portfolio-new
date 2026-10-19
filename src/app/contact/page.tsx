@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { ContactForm } from "@/components/common/ContactForm";
 import { CONTACT_EMAIL, CONTACT_LINKEDIN_URL } from "@/data/contact";
+import { JsonLd } from "@/components/common/JsonLd";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
+import { contactStructuredData } from "@/lib/structuredData";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Contact Vishal Sahani to discuss full-stack web development, UI/UX design, e-commerce platforms, and API integrations.",
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.contact);
 
 export default function ContactPage() {
   return (
     <div className="section-wrap py-12 md:py-16">
+      <JsonLd data={contactStructuredData} />
       <div className="mx-auto max-w-2xl">
         <header className="mb-8">
-          <h1 className="text-4xl font-medium tracking-tight text-neutral-950 sm:text-5xl">Contact</h1>
-          <p className="body-copy mt-4">Have a project in mind? Let&apos;s work together.</p>
+          <h1 className="text-4xl font-medium tracking-tight text-neutral-950 sm:text-5xl">Contact Vishal Sahani</h1>
+          <p className="body-copy mt-4">Have a project or software development role in mind? Let&apos;s talk.</p>
           <Image
             src="/connect-ppl.svg"
             alt=""

@@ -9,6 +9,7 @@ export type Project = {
   repoUrl?: string;
   heroImage?: string;
   previewImage?: string;
+  socialImage?: string;
   imageAlt: string;
 };
 
@@ -27,6 +28,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.jainandiyer.com/",
     heroImage: "/projects/jainiyer.jpg",
     previewImage: "/new-img/jainiyer.jpg",
+    socialImage: "/og/jain-and-iyer.jpg",
     imageAlt: "Jain & Iyer commerce interface shown on desktop and mobile devices",
   },
   {
@@ -43,6 +45,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.gyanlabap.com/",
     heroImage: "/projects/gyanlab.jpg",
     previewImage: "/new-img/gyanlab.jpg",
+    socialImage: "/og/edtech-notes-youtube.jpg",
     imageAlt: "Gyanlab study notes and video learning interfaces shown on mobile devices",
   },
   {
@@ -59,6 +62,7 @@ export const projects: Project[] = [
     liveUrl: "https://true-feedback-byvishal.vercel.app/",
     heroImage: "/projects/truefeedback.jpg",
     previewImage: "/new-img/truefeedback.jpg",
+    socialImage: "/og/anonymous-feedback.jpg",
     imageAlt: "True Feedback public submission page and private dashboard previews",
   },
 ];

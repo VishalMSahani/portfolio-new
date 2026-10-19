@@ -1,6 +1,6 @@
 # Vishal Sahani Portfolio
 
-A modern, minimal portfolio website showcasing full-stack development and UI/UX design projects. Built with Next.js 15 and designed with a monochromatic aesthetic that reveals color on interaction.
+Vishal Sahani's software development and UI/UX design portfolio. Built with Next.js 16, original doodle illustrations, and a permanently monochromatic, minimalist design.
 
 ## ✨ Features
 
@@ -8,14 +8,13 @@ A modern, minimal portfolio website showcasing full-stack development and UI/UX 
 - **Case Study System**: Dynamic case studies with detailed project breakdowns
 - **Contact Forms**: Integrated contact page with quick inquiry form
 - **Skills Showcase**: Interactive tech stack with hover effects
-- **Testimonials**: Smooth looping carousel with center-active design
-- **Client Marquee**: Animated client logo showcase
+- **Clients & Projects**: Compact section using existing project and client logos
 - **Custom 404**: Branded error page
-- **SEO Optimized**: Proper metadata and Open Graph tags
+- **SEO**: Page-specific metadata, canonical URLs, social previews, structured data, robots, and sitemap
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **UI Components**: Headless UI
@@ -29,8 +28,12 @@ A modern, minimal portfolio website showcasing full-stack development and UI/UX 
 ```
 src/
 ├── app/
+│   ├── about/            # Developer profile
 │   ├── contact/          # Contact form page
-│   ├── project/          # Dynamic case study page
+│   ├── projects/         # Gallery and canonical case studies
+│   ├── project/          # Permanent legacy redirects
+│   ├── robots.ts         # Crawl rules
+│   ├── sitemap.ts        # Canonical public pages
 │   ├── page.tsx          # Homepage
 │   └── layout.tsx        # Root layout with metadata
 ├── components/
@@ -42,6 +45,8 @@ src/
 │   ├── caseStudies.ts    # Detailed case study content
 │   └── siteMetaData.ts   # Site configuration
 └── lib/
+    ├── seo.ts            # Shared metadata and canonical URLs
+    ├── structuredData.ts # Factual entity and page graphs
     └── utils.ts          # Utility functions
 ```
 
@@ -49,7 +54,7 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 20.9+ (required by Next.js 16)
 - npm, yarn, pnpm, or bun
 
 ### Installation
@@ -78,6 +83,7 @@ Use [.env.example](.env.example) as a secret-free reference. Add or update the v
 | `CONTACT_TO_EMAIL` | Optional recipient. Defaults to `sahanivishal0808@gmail.com` in the contact route. |
 | `CONTACT_API_URL` | Optional private dashboard API override. When blank/unset, falls back to the existing `NEXT_PUBLIC_CONTACT_API_URL`, then `https://admin.vishal.it.com/api/contact-us`. |
 | `NEXT_PUBLIC_CONTACT_SOURCE` | Optional. Leave blank to preserve the compact/full forms' existing variant-specific source defaults. |
+| `GOOGLE_SITE_VERIFICATION` | Optional Google Search Console HTML-tag `content` token. Public metadata, not a provider API key. Set before building; redeploy after changes. |
 
 For production, explicitly set `CONTACT_API_URL=https://admin.vishal.it.com/api/contact-us` (or your own production dashboard endpoint) so an old local development URL is not used. Next.js inlines `NEXT_PUBLIC_*` values during the build; changing the legacy public endpoint or source only at runtime does not update the built application. The private `CONTACT_API_URL` override is read on the server.
 
@@ -117,15 +123,18 @@ npm start
 
 ## 📄 Key Pages
 
-- `/` - Homepage with all sections
-- `/contact` - Full contact form
-- `/project?project=<slug>` - Dynamic case study pages
-- Custom 404 page
+- `/` — Software developer portfolio and services
+- `/about` — Vishal Sahani's profile and capabilities
+- `/projects` — Project gallery
+- `/projects/<slug>` — Canonical case studies
+- `/contact` — Project enquiries and software-development conversations
+- `/project?project=<slug>` — Permanent redirect to the matching case study
+- Custom, non-indexable 404 page
 
 ## 🎨 Design Features
 
 - **Monochrome Theme**: Clean black, white, and gray palette
-- **Hover Interactions**: Color reveals on interaction
+- **Hover Interactions**: Restrained motion with monochrome images and icons
 - **Smooth Transitions**: Framer Motion animations
 - **GridWrapper**: Consistent spacing with decorative borders
 - **Timeline Layout**: For case studies with section dividers
@@ -133,19 +142,37 @@ npm start
 ## 📱 Case Studies
 
 Currently featuring:
-1. **Jain & Iyer** - Dual-model e-commerce platform
-2. **EdTech Platform** - Notes + YouTube integration
-3. **Anonymous Feedback** - Privacy-first feedback system
+1. **Jain & Iyer** — E-commerce and scheduled society ordering
+2. **Gyanlab** — Study notes and YouTube integration
+3. **True Feedback** — Feedback links and a private response dashboard
 
-Access via: `/project?project=<slug>`
+Access via `/projects/<slug>`:
+- `jain-and-iyer`
+- `edtech-notes-youtube`
+- `anonymous-feedback`
 
-Supported slugs:
-- `society-commerce` → Jain & Iyer
-- `edtech-notes-youtube` → EdTech Platform
-- `anonymous-feedback` → Anonymous Feedback
+The old `society-commerce` slug and `/project?project=<slug>` URLs permanently redirect to their canonical case studies.
 
+## Search visibility and indexing
 
-Deploy the `.next` output folder to your hosting platform.
+The primary portfolio URL is **https://www.vishal.it.com**. Keep [src/data/siteMetaData.ts](src/data/siteMetaData.ts) aligned with the preferred production domain. Canonicals, Open Graph URLs, JSON-LD IDs and sitemap entries use this origin rather than request hosts or preview deployments.
+
+Every public page has its own title, description and self-canonical. Metadata and structured data describe Vishal's software development, UI/UX design, real services and recorded projects. The About page identifies the developer with `ProfilePage`/`Person`; the gallery lists case studies; project pages credit the case-study author without claiming sole product ownership. No invented ratings, locations, credentials, performance metrics or publication dates are included.
+
+Static social previews live under [public/og/](public/og/). The default uses original doodle branding, and project previews are grayscale copies of the existing boards. If project records or their images change, update the matching social asset and its `socialImage` path. Shared metadata expects these assets to be 1200×630.
+
+### After deploying
+
+1. Confirm `https://www.vishal.it.com/` and all seven URLs in `https://www.vishal.it.com/sitemap.xml` are publicly accessible, with the intended canonical and no accidental `noindex` on valid pages. The sitemap excludes aliases, API endpoints and 404s, and does not invent modification dates.
+2. Configure the hosting domain redirect so `https://vishal.it.com/<path>` permanently redirects to `https://www.vishal.it.com/<path>`, preserving paths. Apply equivalent redirects for any retired domain you control. A canonical tag cannot repair broken DNS, authentication or crawler challenges.
+3. Add `https://www.vishal.it.com/` as a URL-prefix property in [Google Search Console](https://search.google.com/search-console). For HTML-tag verification, copy only the tag's `content` token into the hosting variable `GOOGLE_SITE_VERIFICATION`, select Production, and redeploy. Blank/unset values emit no verification tag. DNS verification is another option managed separately by the owner.
+4. Submit `https://www.vishal.it.com/sitemap.xml` in Search Console → Sitemaps. Use URL Inspection for Home, About, Projects, Contact and the three case studies, then request indexing where appropriate.
+5. Review deployed markup with Google's [Rich Results Test](https://search.google.com/test/rich-results) and [Schema Markup Validator](https://validator.schema.org/). Not every valid schema type produces a Google rich result.
+6. Keep the portfolio URL and developer identity consistent on the existing GitHub and LinkedIn profiles. Add useful, truthful case studies as the work grows, and monitor indexing and relevant name/service queries in Search Console.
+
+Deployment, DNS changes, Search Console submission and external validator uploads are owner actions, not automatically performed by this code. Crawlability and structured-data eligibility do **not** guarantee indexing, rankings, sitelinks or rich results.
+
+Automated SEO checks should run against the production-built app with fake-only provider configuration and external networking blocked. Do not submit live enquiries, expose provider credentials or read real dotenv contents during verification.
 
 ## 📝 License
 
@@ -154,10 +181,10 @@ Private - All rights reserved
 ## 👤 Contact
 
 Vishal Sahani
-- Portfolio: https://vishal.it.com
-- Email: vishalsahani0808@email.com
+- Portfolio: https://www.vishal.it.com
+- Public contact: info@vishal.it.com
 - GitHub: @VishalMSahani
 
 ---
 
-Built with ❤️ using Next.js 15 and Tailwind CSS
+Built with ❤️ using Next.js 16 and Tailwind CSS

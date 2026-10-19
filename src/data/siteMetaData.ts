@@ -2,10 +2,12 @@ export const siteMetadata = {
   title: "Vishal Sahani",
   author: "Vishal Sahani",
   headerTitle: "Vishal's Portfolio",
+  jobTitle: "Software Developer",
+  role: "Software Developer & UI/UX Designer",
   description:
-    "I'm Vishal, a software engineer and designer. Welcome to my corner of the internet!",
+    "Vishal Sahani is a software developer and UI/UX designer building websites, full-stack applications, e-commerce platforms, and API integrations.",
   language: "en-us",
-  siteUrl: "https://vishalsahani.it.com",
+  siteUrl: "https://www.vishal.it.com",
 };
 
 export const SocialLinks = {

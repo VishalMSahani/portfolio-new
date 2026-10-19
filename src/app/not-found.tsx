@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: { absolute: "Page not found | Vishal Sahani" },
+  robots: { index: false, follow: true },
+};
 
 export default function NotFoundPage() {
   return (

@@ -4,7 +4,9 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { siteMetadata } from "@/data/siteMetaData";
+import { JsonLd } from "@/components/common/JsonLd";
+import { siteSeoMetadata } from "@/lib/seo";
+import { siteStructuredData } from "@/lib/structuredData";
 
 const displayFont = localFont({
   src: "../../public/fonts/sora/Sora.ttf",
@@ -21,18 +23,7 @@ const bodyFont = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteMetadata.siteUrl),
-  title: {
-    default: "Vishal Sahani — Developer & Designer",
-    template: "%s | Vishal Sahani",
-  },
-  description: siteMetadata.description,
-  openGraph: {
-    title: "Vishal Sahani — Developer & Designer",
-    description: siteMetadata.description,
-    type: "website",
-    url: siteMetadata.siteUrl,
-  },
+  ...siteSeoMetadata,
   icons: {
     icon: [{ url: "/fav-icon.svg", type: "image/svg+xml" }],
     shortcut: ["/fav-icon.svg"],
@@ -44,6 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
       <body>
+        <JsonLd data={siteStructuredData} />
         <a href="#main-content" className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg bg-neutral-950 px-5 py-3 text-sm text-white focus:translate-y-0">
           Skip to content
         </a>

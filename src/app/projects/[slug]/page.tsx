@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { caseStudies, getCaseStudyBySlug } from "@/data/caseStudies";
 import { getProjectBySlug, projects } from "@/data/projects";
-import { siteMetadata } from "@/data/siteMetaData";
+import { JsonLd } from "@/components/common/JsonLd";
+import { createPageMetadata, getProjectSeo } from "@/lib/seo";
+import { getCaseStudyStructuredData } from "@/lib/structuredData";
 
 type CaseStudyPageProps = {
   params: Promise<{ slug: string }>;
@@ -18,21 +20,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
   const study = getCaseStudyBySlug(slug);
-  if (!study) notFound();
+  const project = getProjectBySlug(slug);
+  if (!study || !project) notFound();
+  if (slug !== study.slug) permanentRedirect(`/projects/${study.slug}`);
 
-  const canonical = `${siteMetadata.siteUrl}/projects/${study.slug}`;
-  const description = study.subtitle ?? getProjectBySlug(study.slug)?.summary;
-
-  return {
-    title: study.title,
-    description,
-    alternates: { canonical },
-    openGraph: {
-      title: `${study.title} | ${siteMetadata.title}`,
-      description,
-      url: canonical,
-    },
-  };
+  return createPageMetadata(getProjectSeo(project));
 }
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
@@ -40,18 +32,20 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const study = getCaseStudyBySlug(slug);
   const project = getProjectBySlug(slug);
   if (!study || !project) notFound();
-  if (slug !== study.slug) redirect(`/projects/${study.slug}`);
+  if (slug !== study.slug) permanentRedirect(`/projects/${study.slug}`);
 
   const projectIndex = projects.findIndex((item) => item.slug === study.slug);
   const nextProject = projects[(projectIndex + 1) % projects.length];
 
   return (
     <article>
+      <JsonLd data={getCaseStudyStructuredData(project, study)} />
       <header className="section-wrap pb-8 pt-10 md:pb-10 md:pt-12">
         <Link href="/projects" className="text-link !text-neutral-500">
           <ArrowLeft size={15} aria-hidden="true" /> All projects
         </Link>
         <h1 className="mt-7 text-4xl font-medium tracking-tight md:text-5xl">{study.title}</h1>
+        <p className="mt-3 text-sm text-neutral-500">Case study by Vishal Sahani</p>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-neutral-600">{study.subtitle ?? project.summary}</p>
         {study.tech?.length ? (
           <ul aria-label={`${study.title} technologies`} className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-500">

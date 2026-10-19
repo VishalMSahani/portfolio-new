@@ -3,31 +3,22 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { ProjectCard } from "@/components/cards/ProjectCards";
 import { projects } from "@/data/projects";
-import { siteMetadata } from "@/data/siteMetaData";
+import { JsonLd } from "@/components/common/JsonLd";
+import { createPageMetadata, pageSeo } from "@/lib/seo";
+import { getProjectsStructuredData } from "@/lib/structuredData";
 
-const description =
-  "Websites and full-stack applications designed and built by Vishal Sahani.";
-
-export const metadata: Metadata = {
-  title: "Projects",
-  description,
-  alternates: { canonical: `${siteMetadata.siteUrl}/projects` },
-  openGraph: {
-    title: `Projects | ${siteMetadata.title}`,
-    description,
-    url: `${siteMetadata.siteUrl}/projects`,
-  },
-};
+export const metadata: Metadata = createPageMetadata(pageSeo.projects);
 
 export default function ProjectsPage() {
   const [featured, ...supporting] = projects;
 
   return (
     <div>
+      <JsonLd data={getProjectsStructuredData(projects)} />
       <header className="section-wrap pb-8 pt-12 md:pb-10 md:pt-16">
         <h1 className="text-4xl font-medium tracking-tight md:text-5xl">Projects</h1>
         <p className="mt-4 text-base leading-relaxed text-neutral-600">
-          A few websites and applications I’ve designed and built.
+          Websites and applications I’ve designed and built for commerce, education, and feedback.
         </p>
       </header>
 
